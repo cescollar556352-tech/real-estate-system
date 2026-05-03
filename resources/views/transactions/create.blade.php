@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-2xl">
+<div>
 
     {{-- Header Card --}}
     <div style="background:linear-gradient(135deg,#312e81,#4338ca);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;gap:16px;">
