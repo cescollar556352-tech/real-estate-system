@@ -5,23 +5,34 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-       <div>
-        <x-input-label for="username" value="Username" />
-        <x-text-input id="username" name="username" type="text" :value="old('username')" required autofocus />
-        <x-input-error :messages="$errors->get('username')" />
+        <!-- Username -->
+        <div>
+            <x-input-label for="username" value="Username" />
+            <x-text-input id="username" name="username" type="text" :value="old('username')" required autofocus />
+            <x-input-error :messages="$errors->get('username')" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
-
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
                             required autocomplete="current-password" />
-
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        </div>
+
+        <!-- Role -->
+        <div class="mt-4">
+            <x-input-label for="role" value="Role" />
+            <select id="role" name="role" required
+                    class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                <option value="">-- Select Role --</option>
+                <option value="admin"  {{ old('role') === 'admin'  ? 'selected' : '' }}>Admin</option>
+                <option value="agent" {{ old('role') === 'agent' ? 'selected' : '' }}>Agent</option>
+                <option value="client" {{ old('role') === 'client' ? 'selected' : '' }}>Client</option>
+            </select>
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
         <!-- Remember Me -->

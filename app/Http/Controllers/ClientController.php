@@ -11,7 +11,11 @@ class ClientController extends Controller
     {
         $query = Client::query();
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where(function($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('last_name',  'like', '%' . $request->search . '%')
+                  ->orWhere('middle_name','like', '%' . $request->search . '%');
+            });
         }
         $clients = $query->latest()->paginate(10);
         return view('clients.index', compact('clients'));
@@ -25,11 +29,24 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:20',
+            'first_name'    => 'required|string|max:100',
+            'middle_name'   => 'nullable|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'date_of_birth' => 'nullable|date',
+            'id_type'       => 'nullable|string|max:100',
+            'id_number'     => 'nullable|string|max:100',
+            'email'         => 'nullable|email',
+            'phone'         => 'nullable|string|max:20',
+            'address'       => 'nullable|string',
+            'client_type'   => 'nullable|string|max:100',
         ]);
-        Client::create($request->only('name', 'email', 'phone', 'address'));
+
+        Client::create($request->only(
+            'first_name', 'middle_name', 'last_name',
+            'date_of_birth', 'id_type', 'id_number',
+            'email', 'phone', 'address', 'client_type'
+        ));
+
         return redirect()->route('clients.index')->with('success', 'Client added.');
     }
 
@@ -41,11 +58,24 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:20',
+            'first_name'    => 'required|string|max:100',
+            'middle_name'   => 'nullable|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'date_of_birth' => 'nullable|date',
+            'id_type'       => 'nullable|string|max:100',
+            'id_number'     => 'nullable|string|max:100',
+            'email'         => 'nullable|email',
+            'phone'         => 'nullable|string|max:20',
+            'address'       => 'nullable|string',
+            'client_type'   => 'nullable|string|max:100',
         ]);
-        $client->update($request->only('name', 'email', 'phone', 'address'));
+
+        $client->update($request->only(
+            'first_name', 'middle_name', 'last_name',
+            'date_of_birth', 'id_type', 'id_number',
+            'email', 'phone', 'address', 'client_type'
+        ));
+
         return redirect()->route('clients.index')->with('success', 'Client updated.');
     }
 

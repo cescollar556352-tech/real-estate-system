@@ -10,7 +10,11 @@ class Property extends Model
         'address',
         'price',
         'type',
-        'status'
+        'status',
+        'bedrooms',
+        'bathrooms',
+        'lot_area',
+        'floor_area',
     ];
 
     public function transactions()

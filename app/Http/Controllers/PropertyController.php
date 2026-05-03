@@ -9,9 +9,25 @@ class PropertyController extends Controller
 {
     public function index()
     {
-        $properties = Property::latest()->paginate(10);
+        $query = Property::query();
+if (request('status')) {
+    $query->where('status', request('status'));
+}
+$properties = $query->latest()->paginate(10)->withQueryString();
         return view('properties.index', compact('properties'));
     }
+
+    public function mark(Request $request, Property $property)
+{
+    $request->validate([
+        'status' => 'required|in:available,sold,rented',
+    ]);
+
+    $property->update(['status' => $request->status]);
+
+    return redirect()->route('properties.index', request()->only('status'))
+                     ->with('success', 'Property status updated.');
+}
 
     public function create()
     {
@@ -21,11 +37,21 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'address' => 'required|string|max:255',
-            'price'   => 'required|numeric|min:0',
-            'type'    => 'required|in:house,condo,lot,commercial',
+            'address'    => 'required|string|max:255',
+            'price'      => 'required|numeric|min:0',
+            'type'       => 'required|in:house,condo,lot,commercial',
+            'status'     => 'required|in:available,sold,rented',
+            'bedrooms'   => 'nullable|integer|min:0',
+            'bathrooms'  => 'nullable|integer|min:0',
+            'lot_area'   => 'nullable|numeric|min:0',
+            'floor_area' => 'nullable|numeric|min:0',
         ]);
-        Property::create($request->only('address', 'price', 'type'));
+
+        Property::create($request->only(
+            'address', 'price', 'type', 'status',
+            'bedrooms', 'bathrooms', 'lot_area', 'floor_area'
+        ));
+
         return redirect()->route('properties.index')->with('success', 'Property added.');
     }
 
@@ -37,12 +63,21 @@ class PropertyController extends Controller
     public function update(Request $request, Property $property)
     {
         $request->validate([
-            'address' => 'required|string|max:255',
-            'price'   => 'required|numeric|min:0',
-            'type'    => 'required|in:house,condo,lot,commercial',
-            'status'  => 'required|in:available,sold',
+            'address'    => 'required|string|max:255',
+            'price'      => 'required|numeric|min:0',
+            'type'       => 'required|in:house,condo,lot,commercial',
+            'status'     => 'required|in:available,sold,rented',
+            'bedrooms'   => 'nullable|integer|min:0',
+            'bathrooms'  => 'nullable|numeric|min:0',
+            'lot_area'   => 'nullable|numeric|min:0',
+            'floor_area' => 'nullable|numeric|min:0',
         ]);
-        $property->update($request->only('address', 'price', 'type', 'status'));
+
+        $property->update($request->only(
+            'address', 'price', 'type', 'status',
+            'bedrooms', 'bathrooms', 'lot_area', 'floor_area'
+        ));
+
         return redirect()->route('properties.index')->with('success', 'Property updated.');
     }
 
