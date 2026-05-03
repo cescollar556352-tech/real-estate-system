@@ -30,6 +30,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 RUN npm install && npm run build
 
+RUN chmod -R 777 storage bootstrap/cache
+
 RUN php artisan config:clear && php artisan route:clear && php artisan view:clear
 
 RUN php artisan storage:link || true
@@ -37,7 +39,7 @@ RUN php artisan storage:link || true
 RUN mkdir -p storage/framework/cache storage/framework/sessions \
 storage/framework/views bootstrap/cache public/uploads \
 && chown -R www-data:www-data storage bootstrap/cache public/uploads \
-&& chmod -R 775 storage bootstrap/cache public/uploads
+&& chmod -R 777 storage bootstrap/cache public/uploads
 
 RUN php artisan migrate --force || true
 
