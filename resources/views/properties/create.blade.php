@@ -92,7 +92,6 @@
                         <option value="available" {{ old('status', 'available') == 'available' ? 'selected' : '' }}>Available</option>
                         <option value="sold"      {{ old('status') == 'sold'     ? 'selected' : '' }}>Sold</option>
                         <option value="rented"    {{ old('status') == 'rented'   ? 'selected' : '' }}>Rented</option>
-                        <option value="reserved"  {{ old('status') == 'reserved' ? 'selected' : '' }}>Reserved</option>
                     </select>
                     @error('status') <p style="color: #EF4444; font-size: 12px; margin: 6px 0 0;">{{ $message }}</p> @enderror
                 </div>
@@ -110,7 +109,7 @@
                                 onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.12)';"
                                 onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none';">
                             <option value="">— Select —</option>
-                            @foreach(['1','2','3','4+'] as $opt)
+                            @foreach(['1','2','3','4'] as $opt)
                                 <option value="{{ $opt }}" {{ old('bedrooms') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                             @endforeach
                         </select>
@@ -127,7 +126,7 @@
                                 onfocus="this.style.borderColor='#6366F1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.12)';"
                                 onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='none';">
                             <option value="">— Select —</option>
-                            @foreach(['1','2','3+'] as $opt)
+                            @foreach(['1','2','3'] as $opt)
                                 <option value="{{ $opt }}" {{ old('bathrooms') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                             @endforeach
                         </select>
