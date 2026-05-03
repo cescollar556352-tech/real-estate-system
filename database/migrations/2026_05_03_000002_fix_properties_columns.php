@@ -1,14 +1,16 @@
 <?php
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        DB::statement('ALTER TABLE properties ADD COLUMN IF NOT EXISTS bedrooms TINYINT UNSIGNED NULL');
-        DB::statement('ALTER TABLE properties ADD COLUMN IF NOT EXISTS bathrooms TINYINT UNSIGNED NULL');
-        DB::statement('ALTER TABLE properties ADD COLUMN IF NOT EXISTS lot_area DECIMAL(10,2) NULL');
-        DB::statement('ALTER TABLE properties ADD COLUMN IF NOT EXISTS floor_area DECIMAL(10,2) NULL');
+        Schema::table('properties', function (Blueprint $table) {
+            if (!Schema::hasColumn('properties', 'bedrooms')) $table->unsignedTinyInteger('bedrooms')->nullable();
+            if (!Schema::hasColumn('properties', 'bathrooms')) $table->unsignedTinyInteger('bathrooms')->nullable();
+            if (!Schema::hasColumn('properties', 'lot_area')) $table->decimal('lot_area', 10, 2)->nullable();
+            if (!Schema::hasColumn('properties', 'floor_area')) $table->decimal('floor_area', 10, 2)->nullable();
+        });
     }
-
     public function down(): void {}
 };
