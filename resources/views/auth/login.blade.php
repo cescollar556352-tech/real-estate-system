@@ -29,7 +29,7 @@
                     class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                 <option value="">-- Select Role --</option>
                 <option value="admin"  {{ old('role') === 'admin'  ? 'selected' : '' }}>Admin</option>
-                <option value="agent" {{ old('role') === 'agent' ? 'selected' : '' }}>Agent</option>
+                <option value="agent"  {{ old('role') === 'agent'  ? 'selected' : '' }}>Agent</option>
                 <option value="client" {{ old('role') === 'client' ? 'selected' : '' }}>Client</option>
             </select>
             <x-input-error :messages="$errors->get('role')" class="mt-2" />
@@ -54,5 +54,18 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+
+        <!-- Create Account Link -->
+        <div class="mt-4 text-center" style="border-top: 1px solid #E5E7EB; padding-top: 16px;">
+            <span class="text-sm text-gray-500">Don't have an account?</span>
+            <a href="{{ route('register') }}"
+               class="text-sm font-semibold ms-1"
+               style="color: #4F46E5; text-decoration: none;"
+               onmouseover="this.style.textDecoration='underline'"
+               onmouseout="this.style.textDecoration='none'">
+                Create Account
+            </a>
+        </div>
+
     </form>
 </x-guest-layout>

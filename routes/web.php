@@ -10,7 +10,7 @@ Route::get('/', fn() => redirect()->route('login'));
 
 Route::middleware('auth')->group(function () {
 
-    // Dashboard with stats
+    // ─── Admin Dashboard ───────────────────────────────────────
     Route::get('/dashboard', function () {
         return view('dashboard', [
             'totalProperties'     => \App\Models\Property::count(),
@@ -26,15 +26,43 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('dashboard');
 
-    // Profile routes
+    // ─── Agent Dashboard ───────────────────────────────────────
+    Route::get('/agent/dashboard', function () {
+        return view('agent.dashboard', [
+            'totalProperties'     => \App\Models\Property::count(),
+            'availableProperties' => \App\Models\Property::where('status', 'available')->count(),
+            'myTransactions'      => \App\Models\Transaction::where('user_id', auth()->id())->count(),
+            'pendingDeals'        => \App\Models\Transaction::where('user_id', auth()->id())->where('status', 'pending')->count(),
+            'completedDeals'      => \App\Models\Transaction::where('user_id', auth()->id())->where('status', 'completed')->count(),
+            'totalCommission'     => \App\Models\Transaction::where('user_id', auth()->id())->where('status', 'completed')->sum('amount'),
+            'recentTransactions'  => \App\Models\Transaction::with(['property', 'client'])
+                                        ->where('user_id', auth()->id())
+                                        ->latest('transaction_date')->take(5)->get(),
+            'availableListings'   => \App\Models\Property::where('status', 'available')->latest()->take(5)->get(),
+        ]);
+    })->middleware('role:agent')->name('agent.dashboard');
+
+    // ─── Client Dashboard ──────────────────────────────────────
+    Route::get('/client/dashboard', function () {
+        return view('client.dashboard', [
+            'availableProperties' => \App\Models\Property::where('status', 'available')->latest()->get(),
+            'myTransactions'      => \App\Models\Transaction::with(['property'])
+                                        ->where('client_id', function($q) {
+                                            $q->select('id')->from('clients')
+                                              ->where('email', auth()->user()->email)->limit(1);
+                                        })->latest()->get(),
+        ]);
+    })->middleware('role:client')->name('client.dashboard');
+
+    // ─── Profile ───────────────────────────────────────────────
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // All roles can view properties
+    // ─── Properties (all roles can view) ───────────────────────
     Route::get('/properties', [PropertyController::class, 'index'])->name('properties.index');
 
-    // Admin only
+    // ─── Admin only ────────────────────────────────────────────
     Route::middleware('role:admin')->group(function () {
         Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
         Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store');
@@ -44,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/properties/{property}/mark', [PropertyController::class, 'mark'])->name('properties.mark');
     });
 
-    // Admin and Agent only (clients cannot access)
+    // ─── Admin + Agent ─────────────────────────────────────────
     Route::middleware('role:admin,agent')->group(function () {
         Route::resource('clients', ClientController::class);
         Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
